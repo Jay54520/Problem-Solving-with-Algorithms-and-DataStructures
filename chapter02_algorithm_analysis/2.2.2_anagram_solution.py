@@ -39,4 +39,5 @@ def angram_solution2(str1, str2):
     return match 
 
 print(angram_solution1('abcd', 'dcba'))
-            
+   
+# angram_solution3 generate all possibilities, compare   
