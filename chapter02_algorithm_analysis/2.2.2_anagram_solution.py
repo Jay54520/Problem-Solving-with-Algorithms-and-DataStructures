@@ -19,6 +19,24 @@ def angram_solution1(str1, str2):
             a_list[pos2] = None
     return still_ok
     
-print(angram_solution1('abcd', 'dcba'))    
+print(angram_solution1('abcd', 'dcba'))   
+
+# 先排序，再比较
+def angram_solution2(str1, str2):
+    list1 = list(str1)
+    list2 = list(str2)
+    
+    pos = 0
+    match = True
+    
+    while pos < len(list1) and match:
+        if list1[pos] == list2[pos]:
+            match = True
+            pos += 1
+        else:
+            match = False
             
+    return match 
+
+print(angram_solution1('abcd', 'dcba'))
             
