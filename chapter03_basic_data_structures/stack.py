@@ -17,7 +17,9 @@ class Stack():
     def size(self):
         return len(self.items)
         
-s = Stack()      
-print(s.is_empty())  
-s.push('a')
-print(s.pop())
+
+if __name__ == '__main__':
+    s = Stack()      
+    print(s.is_empty())  
+    s.push('a')
+    print(s.pop())
