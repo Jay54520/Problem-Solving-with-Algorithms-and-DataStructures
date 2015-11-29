@@ -15,11 +15,11 @@ def par_checker(symbol_string):
                 s.pop()
         index += 1
         
-    if s == [] and balanced:
+    if s.is_empty() and balanced:
         return True
     else:
         return False
         
-print(par_checker('(() () ())'))        
+print(par_checker('((()))'))        
 print(par_checker('(() () ('))
     
