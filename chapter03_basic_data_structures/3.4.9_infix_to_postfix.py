@@ -7,6 +7,7 @@ def infix_to_postfix(infix_expression):
     precedence["-"] = 2
     precedence["*"] = 3
     precedence["/"] = 3
+    precedence["^"] = 4
     operator_stack = Stack()
     postfix_list = []
     
@@ -35,6 +36,6 @@ def infix_to_postfix(infix_expression):
     return " ".join(postfix_list)
 
 print(infix_to_postfix("A * B + C * D"))
-print(infix_to_postfix("( A + B + C ) * C - ( D - E ) * ( F + G )"))
+print(infix_to_postfix("( A + B + C ^ ( 4 - 2 ) ) * C - ( D - E ) * ( F + G )"))
             
         
