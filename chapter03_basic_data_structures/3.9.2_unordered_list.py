@@ -61,6 +61,15 @@ class UnorderedList:
         current.set_next(temp)
         current = current.get_next()
         
+    def print_list(self):
+        current = self.head
+        a_list = []
+        while current != None:
+            a_list.append(current.get_data())
+            current = current.get_next()
+        
+        return a_list
+        
 if __name__ == "__main__":
     mylist = UnorderedList()
 
@@ -89,7 +98,7 @@ if __name__ == "__main__":
 
 
     mylist.append(123)
-    print(mylist.size())
+    print(mylist.print_list())
         
             
             
