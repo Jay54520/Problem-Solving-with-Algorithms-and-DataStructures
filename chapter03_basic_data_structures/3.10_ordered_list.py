@@ -69,7 +69,10 @@ class OrderedList:
         if previous == None:
             self.head = self.head.get_next()
         else:
-            previous.set_next(current.get_next())
+            if current.get_next() == None:
+                current = previous
+            else:
+                previous.set_next(current.get_next())
     
     def print_list(self):
         current = self.head
