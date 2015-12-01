@@ -2,7 +2,8 @@ import turtle
 import ipdb
 
 def tree(branch_len, t):
-    if branch_len > 5:
+    if branch_len > 30:
+        ipdb.set_trace()
         t.forward(branch_len)
         # 与当前方向右边成 20°
         t.right(20)
