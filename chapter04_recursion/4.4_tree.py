@@ -1,19 +1,23 @@
 import turtle
 import ipdb
 
-def tree(branch_len, t):
-    if branch_len > 30:
-        ipdb.set_trace()
+
+def tree(branch_len, t):    
+    # base case
+    if branch_len > 5:
         t.forward(branch_len)
-        # 与当前方向右边成 20°
         t.right(20)
         tree(branch_len - 15, t)
+        
+        # 上一个 tree() 到达 base case
+        # 递归另一边，如果符合 base case 的话
         t.left(40)
         tree(branch_len - 15, t)
+        # 不满足 base case
         t.right(20)
         t.backward(branch_len)
         
-def main():
+def main():    
     t = turtle.Turtle()
     my_win = turtle.Screen()
     t.left(90)
