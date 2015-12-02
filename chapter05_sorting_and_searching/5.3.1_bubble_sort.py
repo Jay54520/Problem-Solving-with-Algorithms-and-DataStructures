@@ -3,7 +3,7 @@ def bubble_sort(a_list):
     pairs = length - 1
     exchanges = True
     
-    while pairs > 1 and exchanges:
+    while pairs > 0 and exchanges:
         # 如果下面没有变动，则说明已经排序完毕
         exchanges = False
         for element in range(pairs):
