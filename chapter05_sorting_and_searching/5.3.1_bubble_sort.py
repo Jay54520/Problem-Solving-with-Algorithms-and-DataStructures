@@ -5,9 +5,11 @@ def bubble_sort(a_list):
     while pairs > 1:
         for element in range(pairs):
             if a_list[element] > a_list[element+1]:
-                temp = a_list[element]
-                a_list[element] = a_list[element+1]
-                a_list[element+1] = temp
+                # simultaneous 减少占用空间
+                a_list[element], a_list[element+1] = a_list[element+1], a_list[element]
+                # temp = a_list[element]
+                # a_list[element] = a_list[element+1]
+                # a_list[element+1] = temp
         pairs -= 1    
     return a_list
     
