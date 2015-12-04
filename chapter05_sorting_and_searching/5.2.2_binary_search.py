@@ -7,7 +7,7 @@ def binary_search(order_list, search_num):
         if order_list[midpoint] == search_num:
             found = True
         else:
-            if midpoint > search_num:
+            if order_list[midpoint] > search_num:
                 last = midpoint - 1
             else:
                 first = midpoint + 1

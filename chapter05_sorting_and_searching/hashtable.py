@@ -1,11 +1,11 @@
-class HashTable:
+class HashTable():
     def __init__(self):
         self.size = 11
         self.slots = [None] * self.size
         self.data = [None] * self.size
         
     def put(self, key, data):
-        hash_value = self.hash_function(key)
+        hash_value = self.hash_func(key)
         
         if self.slots[hash_value] == None:
             self.slots[hash_value] = key
@@ -13,53 +13,65 @@ class HashTable:
         else:
             if self.slots[hash_value] == key:
                 self.data[hash_value] = data
-            # 被别的值占据了位置 寻找下一个位置
+            # self.slots[hash_value] != key，储存了另一对 key, data
             else:
-                next_slot = rehash(hash_value)
-                while self.slots[next_slot] != None and \
-                        self.slots[next_slot] != key:
-                    next_slot = self.rehash(next_slot)
+                next_hash_value = self.rehash(hash_value)
+                while self.slots[next_hash_value] != None and \
+                        self.slots[next_hash_value] != key:
+                    next_hash_value = self.rehash(next_hash_value)
                 
-                if self.slots[next_slot] == None:
-                    self.slots[next_slot] = key
-                    self.data[next_slot] = data
-                else:
-                    self.data[next_slot] = data
-                    
-    def hash_function(self, key):
+                if self.slots[next_hash_value] == None:
+                    self.slots[next_hash_value] = key
+                    self.data[next_hash_value] = data
+                
+                if self.slots[next_hash_value] == key:
+                    self.data[next_hash_value] = data
+    
+    def hash_func(self, key):
         return key % self.size
         
-    def rehash(self, old_hash_value):
-        return (old_hash_value + 1) % self.size
+    def rehash(self, old_hash):
+        return (old_hash + 1) % self.size
         
     def get(self, key):
-        start_slot = hash_function(key)
+        start_slot = self.hash_func(key)
         
         data = None
-        position = start_slot
         found = False
         stop = False
-        while self.slots[position] != None and not found and not stop:
+        position = start_slot
+        
+        while self.slots[position] != None and not found \
+                and not stop:
             if self.slots[position] == key:
                 found = True
                 data = self.data[position]
             else:
-                position = rehash(position)
+                position = self.rehash(position)
                 if position == start_slot:
                     stop = True
-        return data
-    
+        
+        return data 
+        
     def __getitem__(self, key):
         return self.get(key)
         
     def __setitem__(self, key, data):
-        self.put(key, data)
+        return self.put(key, data)
+                    
 
 if __name__ == '__main__':
-    h=HashTable()
-    h[54]="cat"
-    h[26]="dog"
-    print(h.slots) 
-    print(h.data)
+    H=HashTable()
+    H[54]="cat"
+    H[26]="dog"
+    H[93]="lion"
+    H[17]="tiger"
+    H[77]="bird"
+    H[31]="cow"
+    H[44]="goat"
+    H[55]="pig"
+    H[20]="chicken"    
+    print(H.slots) 
+    print(H.data)
             
         
