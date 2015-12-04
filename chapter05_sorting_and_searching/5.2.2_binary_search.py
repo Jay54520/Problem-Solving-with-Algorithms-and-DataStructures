@@ -1,39 +1,38 @@
-def binary_search(a_ascending_list, num):
+def binary_search(order_list, search_num):
     first = 0
-    last = len(a_ascending_list) - 1
-    found = False 
-    
+    last = len(order_list) - 1
+    found = False
     while first <= last and not found:
-        mid = (first + last) // 2
-        if a_ascending_list[mid] == num:
+        midpoint = (first + last) // 2
+        if order_list[midpoint] == search_num:
             found = True
         else:
-            if a_ascending_list[mid] > num:
-                last = mid - 1
+            if midpoint > search_num:
+                last = midpoint - 1
             else:
-                first = mid + 1 
-                
-    return found
+                first = midpoint + 1
     
-test_list = [0, 1, 2, 8, 13, 17, 19, 32, 42]
+    return found
+
+def binary_search_recursive(order_list, search_num):
+    if len(order_list) == 0:
+        return False
+    else:
+        midpoint = len(order_list) // 2 
+        if order_list[midpoint] == search_num:
+            return True
+        elif order_list[midpoint] > search_num:
+            # 递归引用不能少了 return 
+            return binary_search_recursive(order_list[:midpoint - 1], search_num)
+        else:
+            return binary_search_recursive(order_list[midpoint + 1:], search_num)
+    
+test_list = [0, 1, 2, 8, 13, 17, 19, 32, 42,]
 print(binary_search(test_list, 3))
 print(binary_search(test_list, 13))    
 
-def binary_search_wrong(a_ascending_list, num):    
-    found = False
-    half = len(a_ascending_list) // 2
-    while len(a_ascending_list) > 1 and not found:
-        if a_ascending_list[half] == num:
-            found = True
-        elif a_ascending_list[half] < num:
-            binary_search(a_ascending_list[half + 1:], num)
-        else:
-            binary_search(a_ascending_list[:half], num)
+print(binary_search_recursive(test_list, 3))
+print(binary_search_recursive(test_list, 13))
         
-    if len(a_ascending_list) == 1:
-        if a_ascending_list[0] == num:
-            return True
-        else:
-            return False
+        
     
-    return found
