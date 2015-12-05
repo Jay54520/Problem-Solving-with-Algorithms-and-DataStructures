@@ -163,6 +163,20 @@ class BinarySearchTree:
                                     current_node.right_child.left_child,
                                     current_node.right_child.right_child)
                     
+    def find_successor(self):
+        succ = None 
+        if self.has_right_child():
+            succ = self.right_child.find_min()
+        else:
+            if self.parent:
+                if self.is_left_child():
+                    succ = self.parent
+                else:
+                    self.parent.right_child = None
+                    succ = self.parent.find_successor()
+                    self.parent.right_child = self 
+                    
+        return succ
     
     def __len__(self):
         return self.size 
