@@ -177,6 +177,12 @@ class BinarySearchTree:
                     self.parent.right_child = self 
                     
         return succ
+        
+    def find_min(self):
+        current = self
+        while current.has_left_child():
+            current = current.left_child
+        return current
     
     def __len__(self):
         return self.size 
