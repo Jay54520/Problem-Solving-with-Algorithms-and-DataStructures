@@ -83,7 +83,17 @@ class TreeNode:
                 else: 
                     self.parent.right_child = self.right_child
                 self.right_child.parent = self.parent
-            
+    
+    # overrides "for x in "
+    def __iter__(self):
+        if self:
+            if self.has_left_child():
+                for elem in self.left_child:
+                    yield elem 
+            yield self.key 
+            if self.has_right_child():
+                for elem in self.right_child:
+                    yield elem 
     
 class BinarySearchTree:
     def __init__(self):
