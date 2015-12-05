@@ -183,6 +183,28 @@ class BinarySearchTree:
         while current.has_left_child():
             current = current.left_child
         return current
+        
+    def splice_out(self):
+        if self.is_leaf():
+            if self.is_left_child():
+                self.parent.left_child = self.left_child
+            else:
+                self.parent.right_child = self.left_child
+        elif self.has_any_children():
+            if self.has_left_child():
+                if self.is_left_child():
+                    self.parent.left_child = self.left_child
+                else:
+                    self.parent.right_child = self.left_child
+                # 有 children 就要告诉它它的爹是谁， 
+                # 上面的 leaf 没有 children, 就只需要告诉它爷爷它的儿子变了
+                self.left_child.parent = self.parent 
+            else:
+                if self.is_left_child():
+                    self.parent.left_child = self.right_child
+                else: 
+                    self.parent.right_child = self.right_child
+                self.right_child.parent = self.parent
     
     def __len__(self):
         return self.size 
