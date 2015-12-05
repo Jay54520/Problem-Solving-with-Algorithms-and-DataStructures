@@ -60,9 +60,18 @@ def postorder_evaluate(tree):
         # 如果到了 '叶子'
         else:
             return tree.get_root_val()
- 
-pt = build_parse_tree("( ( 10 + 5 ) * 3 )")
+            
+def print_exp(tree):
+    str_val = ""
+    if tree:
+        str_val = '(' + print_exp(tree.get_left_child())
+        str_val = str_val + str(tree.get_root_val())
+        str_val = str_val + print_exp(tree.get_right_child()) + ')'
+    return str_val
+    
+pt = build_parse_tree("( ( 10 + 5 ) * ( 2 + 2 ) )")
 print(postorder_evaluate(pt))     
+print(print_exp(pt))
         
 def preorder(tree):
     if tree:
