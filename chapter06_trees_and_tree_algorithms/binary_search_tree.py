@@ -55,6 +55,11 @@ class BinarySearchTree:
         return self.get(key)
         
     # in operation 
+    def __contains__(self, key):
+        if self._get(key, self.root):
+            return True 
+        else:
+            return False 
     
     def __len__(self):
         return self.size 
