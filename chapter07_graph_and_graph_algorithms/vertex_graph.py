@@ -47,7 +47,21 @@ class Vertex:
         
     def getConnections(self):
         return self.connectedTo.keys()
-        
+    
+    def orderByAvail(n):
+        resList = []
+        for v in n.getConnections():
+            if v.getColor() == 'white':
+                c = 0
+                for w in v.getConnections():
+                    if w.getColor() == 'white':
+                        c += 1
+                # 如果 v 为白色，则看与 v 相连的白色有多少个
+                resList.append((c, v))
+        # 先 x[0] 即 c,再排序 --》 即为按照 c 的大小排序
+        resList.sort(key=lambda x: x[0])
+        return [y[1] for y in resList]
+    
     def getId(self):
         return self.id 
         
