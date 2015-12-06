@@ -22,6 +22,9 @@ def traverse(y):
             print(x.getId())
             x = x.getPred()
         print(x.getId())
-        
+
+from _02_build_graph import buildGraph   
+
+g = buildGraph(wordfile)
 traverse(g.getVertex('sage'))
 
