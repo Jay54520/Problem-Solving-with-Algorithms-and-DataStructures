@@ -17,17 +17,14 @@ def infix_to_postfix(infix_string):
                 output.append(s.pop())
             s.pop()
         else:
-            if not s.is_empty():
-                if p[e] <= p[s.peek()]:
+            if not s.is_empty() and p[e] <= p[s.peek()]:                
                     output.append(s.pop())
             s.push(e)
     
     while not s.is_empty():
         output.append(s.pop())
         
-    result = ""
-    for e in output:
-        result += e 
+    return " ".join(output)
         
     return result 
     
