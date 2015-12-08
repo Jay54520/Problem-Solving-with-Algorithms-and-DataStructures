@@ -1,18 +1,19 @@
 from queue import Queue
+import random
 
-def hot_potato(name_list, num):
-    sim_queue = Queue()
+def hot_potato(name_list):
+    a_queue = Queue()
     for name in name_list:
-        sim_queue.enqueue(name)
-    
-    while sim_queue.size() > 1:
-        for i in range(num):
-            sim_queue.enqueue(sim_queue.dequeue())
-            
-        # 传了 num 次数后，排除有 potato 的那个人
-        sim_queue.dequeue()
+        a_queue.enqueue(name)
         
-    return sim_queue.dequeue()
+    while a_queue.size() > 1:       
+        num = random.randint(1, 7)
+        for i in range(num):
+            tem = a_queue.dequeue()
+            a_queue.enqueue(tem)
+        a_queue.dequeue()
+            
+    return a_queue.dequeue()
     
 print(hot_potato(["Bill", "David", "Susan", "Jane", "Kent",
-    "Brad"], 7))    
+    "Brad"]))    
