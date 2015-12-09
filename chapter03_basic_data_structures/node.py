@@ -1,7 +1,8 @@
 class Node():
-    def __init__(self, data):
+    # 相比书中，添加一个 next 默认参数，可以在创建时有一个 next 索引
+    def __init__(self, data, next=None):
         self.data = data
-        self.next = None
+        self.next = next
         
     def get_data(self):
         return self.data 
