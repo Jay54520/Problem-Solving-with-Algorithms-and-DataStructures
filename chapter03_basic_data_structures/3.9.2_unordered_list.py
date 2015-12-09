@@ -2,22 +2,27 @@ from node import Node
 
 class UnorderedList:
     def __init__(self):
-        self.head = None
-        self.tail = None
+        self.head = None 
+        self.end = None 
     
     def is_empty(self):
         return self.head == None
         
-    def add(self, item):
-        temp = Node(item)
-        temp.set_next(self.head)
-        if self.tail == None:
-            self.tail = temp
-            
-        self.head = temp
+    def add(self, data):
+        new_node = Node(data)
+        if self.head == None:
+            self.end = new_node
         
+        new_node.set_next(self.head)
+        self.head = new_node 
+    
+    def append(self, data):
+        new_node = Node(data)
+        self.end.set_next(new_node)
+        self.end = new_node 
+    
     def size(self):
-        current = self.head
+        current = self.head 
         count = 0
         while current != None:
             count += 1
@@ -25,51 +30,53 @@ class UnorderedList:
             
         return count 
         
-    def search(self, item):
-        current = self.head
-        found = False
+    def search(self, data):
+        current = self.head 
+        found = False 
         while current != None and not found:
-            if current.get_data() == item:
+            if current.get_data() == data:
                 found = True
             else:
                 current = current.get_next()
-        
+                
         return found 
         
-    def remove(self, item):
-        current = self.head 
+    def remove(self, data):
         previous = None
-        found = False
-        # 假定要删除的 Item 存在
-        while not found:
-            if current.get_data() == item:
-                found = True
+        current = self.head 
+        found = False 
+
+        while current != None and not found:
+            if current.get_data() == data:
+                found = True 
             else:
-                # previous 指针指向 current, current 指向 current 的下一个
-                previous = current
+                previous = current 
                 current = current.get_next()
-        
-        # 如果 self.head 就是要找的
-        if previous == None:
-            self.head = self.head.get_next()
+            
+        if not found:                                                                 
+            raise ValueError('%s not exists.' % data)
         else:
-            previous.set_next(current.get_next())
+            if current == self.head:
+                self.head = self.head.get_next()
+                return current.get_data()
+            elif current == self.end:
+                previous.set_next(None)
+                self.end = previous 
+                return current.get_data()
+            else:
+                previous.set_next(current.get_next())
+                return current.get_data()
     
-    def append(self, item):
-        current = self.tail
-        temp = Node(item)
-        current.set_next(temp)
-        current = current.get_next()
-        
-    def print_list(self):
-        current = self.head
+    # 如果没有 list [] 怎么打印出来？ 用 str ? 
+    def __str__(self):
+        current = self.head 
         a_list = []
         while current != None:
-            a_list.append(current.get_data())
+            a_list.append(str(current.get_data()))
             current = current.get_next()
-        
-        return a_list
-        
+            
+        return ', '.join(a_list)
+     
 if __name__ == "__main__":
     mylist = UnorderedList()
 
@@ -95,11 +102,7 @@ if __name__ == "__main__":
     mylist.remove(31)
     print(mylist.size())
     print(mylist.search(93))
-
-
+    
     mylist.append(123)
-    print(mylist.print_list())
-        
-            
-            
-        
+    mylist.append(123)
+    print(mylist)                
