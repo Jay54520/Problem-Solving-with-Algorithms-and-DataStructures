@@ -8,9 +8,7 @@ def pal_checker(a_string):
     
     match = True
     while char_deque.size() > 1 and match:
-        if char_deque.remove_front() == char_deque.remove_rear():
-            match = True
-        else:
+        if char_deque.remove_front() != char_deque.remove_rear():
             match = False 
     
     return match
