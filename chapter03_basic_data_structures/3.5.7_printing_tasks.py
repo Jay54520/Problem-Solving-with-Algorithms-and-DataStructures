@@ -3,73 +3,67 @@ import random
 
 class Printer:
     def __init__(self, ppm):
-        self.page_rate = ppm
+        self.ppm = ppm
         self.current_task = None
         self.time_remaining = 0
         
     def tick(self):
         if self.current_task != None:
-            # 现在求得是每秒钟的打印 for current_second in num_seconds
-            self.time_remaining = self.time_remaining - 1
+            self.time_remaining -= 1
             if self.time_remaining <= 0:
-                self.current_task = None
+                self.current_task = None 
                 
-    def busy(self):
+    def is_busy(self):
         if self.current_task != None:
-            return True
+            return True 
         else:
             return False 
             
     def start_next(self, new_task):
         self.current_task = new_task
-        # 模拟打印时间 秒
-        self.time_remaining = new_task.get_pages() * 60 / self.page_rate
- 
+        self.time_remaining = new_task.get_pages() / self.ppm * 60
+        
 class Task:
-    def __init__(self, time):
-        self.timestamp = time
+    def __init__(self, start_time):
+        self.start_time = start_time
         self.pages = random.randrange(1, 21)
         
-    def get_stamp(self):
-        return  self.timestamp
-        
     def get_pages(self):
-        return self.pages
+        return self.pages 
         
     def wait_time(self, current_time):
-        return current_time - self.timestamp
+        return current_time - self.start_time 
         
-def simulation(num_seconds, pages_per_minute):
-    lab_printer = Printer(pages_per_minute)
-    print_queue = Queue()
+def simulation(num=10, ppm=10, hours=1):
+    q = Queue()
+    p = Printer(ppm)
     waiting_times = []
     
-    for current_second in range(num_seconds):
-        if new_print_task():
+    for current_second in range(0, hours*3600):
+        if new_print_task(num):
             task = Task(current_second)
-            print_queue.enqueue(task)
+            q.enqueue(task)
             
-        if (not lab_printer.busy()) and (not print_queue.is_empty()):
-            next_task = print_queue.dequeue()
-            # 与 pages_per_minute 有没有关？ 这里怎么计算的秒数，我又没有经过那么长时间
-            # 有关。 time_remaining -= 1 初始 time_remaining = new_task.get_pages() * 60 / self.page_rate
-            # 我自己加上 当前的 打印时间 ，书上没加
-            waiting_times.append(next_task.wait_time(current_second)+next_task.get_pages()/pages_per_minute*60)
-            lab_printer.start_next(next_task)
+        if not p.is_busy() and not q.is_empty():
+            task = q.dequeue()
+            # start_time 是在 上一个 if 中添加，现在轮到进入打印机
+            # 等待终止
+            waiting_times.append(task.wait_time(current_second))
+            p.start_next(task)
         
-        # 减去当前时间 1s 在 Printer 类z中通过剩余时间判断是否为空闲 
-        lab_printer.tick()
-    
+        p.tick()
+        
     average_wait = sum(waiting_times) / len(waiting_times)
-    print("Average Wait %6.2f secs %3d tasks remaining."
-        % (average_wait, print_queue.size()))
-            
-def new_print_task():
-    if random.randrange(1, 181) == 180:
-        return True
+    
+    print("Average wait %6.2f secs %3d tasks remaining."
+        % (average_wait, q.size()))
+
+def new_print_task(num):
+    if random.randrange(1800 // num)  == 1:
+        return True 
     else:
-        return False
+        return False 
         
 for i in range(10):
-    simulation(3600, 5)
-        
+    simulation()
+    
