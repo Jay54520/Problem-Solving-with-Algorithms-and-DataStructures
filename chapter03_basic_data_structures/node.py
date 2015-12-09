@@ -1,5 +1,6 @@
 class Node():
     # 相比书中，添加一个 next 默认参数，可以在创建时有一个 next 索引
+    # 不可以，因为有 append 所以需要先把 end 指向它，再给它添加 next
     def __init__(self, data, next=None):
         self.data = data
         self.next = next
