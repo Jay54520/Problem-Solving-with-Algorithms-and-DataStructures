@@ -2,33 +2,37 @@ from node import Node
 
 class OrderedList:
     def __init__(self):
-        self.head = None        
+        self.head = None 
     
     def is_empty(self):
         return self.head == None
         
-    def add(self, item):
-        previous = None
-        current = self.head
-        stop = False 
-        while current != None and not stop:            
-            if current.get_data() > item:
-                stop = True
-            else:   
-                previous = current
-                current = current.get_next()
+    def add(self, data):
+        previous = None 
+        current = self.head 
+        new_node = Node(data)        
         
-        temp = Node(item)
-        if previous == None:                        
-            temp.set_next(self.head)
-            self.head = temp
+        # 如果需要递增：current.get_data() < data 时继续，大于等于 data 时停止
+        # 如果需要递减：current.get_data() > data 时继续， 小于等于 data 时停止
+        while current != None and current.get_data() < data:
+            previous = current
+            current = current.get_next()
+            
+        if current == None:
+            if previous == None:
+                self.head = new_node
+            else:
+                previous.set_next(new_node)                       
         else:
-            temp.set_next(current)
-            previous.set_next(temp)
-                        
+            if previous == None:
+                new_node.set_next(self.head)
+                self.head = new_node
+            else:
+                previous.set_next(new_node)
+                new_node.set_next(current)
         
     def size(self):
-        current = self.head
+        current = self.head 
         count = 0
         while current != None:
             count += 1
@@ -36,44 +40,43 @@ class OrderedList:
             
         return count 
         
-    def search(self, item):
-        current = self.head
-        found = False
-        stop = False
-        while current != None and not found and not stop:
-            if current.get_data() == item:
+    def search(self, data):        
+        current = self.head 
+        found = False 
+        while current != None and current.get_data() <= data and \
+                not found:
+            if current.get_data() == data:
                 found = True
             else:
-                # 按递增顺序排列，如果当前值比所搜索的值大， 则停止
-                if current.get_data() > item:
-                    stop = True
-                else:
-                    current = current.get_next()
-        
+                current = current.get_next()
+                
         return found 
         
-    def remove(self, item):
-        current = self.head 
+    def remove(self, data):
         previous = None
-        found = False
-        # 假定要删除的 Item 存在
-        while not found:
-            if current.get_data() == item:
-                found = True
+        current = self.head 
+        found = False         
+        while current != None and current.get_data() <= data and \
+                not found:
+            if current.get_data() == data:
+                found = True 
             else:
-                # previous 指针指向 current, current 指向 current 的下一个
-                previous = current
+                previous = current 
                 current = current.get_next()
-        
-        # 如果 self.head 就是要找的
-        if previous == None:
-            self.head = self.head.get_next()
+            
+        if not found:
+            return False
+            #raise ValueError('%s not exists.' % data)
         else:
-            if current.get_next() == None:
-                current = previous
+            if current == self.head:
+                self.head = self.head.get_next()
+                return current.get_data()
+            elif current.get_next() == None:
+                previous.get_next(None)
             else:
                 previous.set_next(current.get_next())
-    
+                return current.get_data()
+                
     def print_list(self):
         current = self.head
         a_list = []
@@ -82,7 +85,7 @@ class OrderedList:
             current = current.get_next()
         
         return a_list
-        
+                
 if __name__ == "__main__":
     mylist = OrderedList()
 
@@ -109,8 +112,4 @@ if __name__ == "__main__":
     print(mylist.size())
     print(mylist.search(93))
     
-    print(mylist.print_list())
-        
-            
-            
-        
+    print(mylist.print_list())              
