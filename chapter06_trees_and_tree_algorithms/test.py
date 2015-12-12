@@ -1,46 +1,59 @@
-def binary_tree(r):
-    return [r, [], []]
-    
-def insert_left(root, new_branch):
-    t = root.pop(1)
-    if len(t) > 1:
-        root.insert(1, [new_branch, t, []])
-    else:
-        root.insert(1, [new_branch, [], []])
-    
-    return root 
-    
-def insert_right(root, new_branch):
-    t = root.pop(2)
-    
-    if len(t) > 1:
-        root.insert(2, [new_branch, t, []])
-    else:
-        root.insert(2, [new_branch, [], []])
+class BinHeap:
+    def __init__(self):
+        self.list = [0]
+        self.index = 0
         
-    return root 
-    
-def get_root_val(root):
-    return root[0]
-    
-def set_root_val(root, new_val):
-    root[0] = new_val
-    
-def get_left_child(root):
-    return root[1]
-    
-def get_right_child(root):
-    return root[2]
-    
-r = binary_tree(3)
-insert_left(r, 4)
-insert_left(r, 5)
-insert_right(r, 6)
-insert_right(r, 7)
-l = get_left_child(r)
-print(l)
-set_root_val(l, 9)
-print(r)
-insert_left(l, 11)
-print(r)
-print(get_right_child(get_right_child(r)))
+    def get_list(self):
+        self.list.pop(0)
+        return self.list
+        
+    def perc_up(self, index):
+        while index > 0:
+            if self.list[index] < self.list[index // 2]:
+                self.list[index], self.list[index // 2] = self.list[index // 2], self.list[index]
+                index //= 2
+            else:
+                return             
+            
+    def insert(self, val):
+        self.list.append(val)
+        self.index += 1
+        self.perc_up(self.index)
+        
+    def perc_down(self, index):
+        while (2 * index) <= self.index:
+            min_child = self.min_child(index)
+            self.list[index], self.list[min_child] = self.list[min_child], self.list[index]
+            index = min_child
+            
+    def min_child(self, index):
+        if (2 * index + 1) > self.index:
+            return 2 * index 
+        if self.list[2 * index] < self.list[2 * index + 1]:
+            return 2 * index
+        else:
+            return 2 * index + 1
+            
+    def del_min(self):
+        return_val = self.list[1]
+        self.list[1] = self.list[self.index]
+        self.list.pop()
+        self.index -= 1
+        self.perc_down(1)
+        return return_val
+        
+    def build_heap(self, a_list):                
+        self.index = len(a_list)
+        self.list = [0] + a_list[:]
+        index = self.index // 2 
+        while index > 0:            
+            self.perc_down(index)
+            index -= 1
+            
+b = BinHeap()            
+b.build_heap([9,6,5,2,3])
+print(b.del_min())
+b.insert(100)
+print(b.get_list())
+
+        
