@@ -1,92 +1,84 @@
 from stack import Stack 
 from binarytree import BinaryTree
 
-def build_parse_tree(fp_exp):
-    fp_list = fp_exp.split()
-    p_stack = Stack()
-    e_tree = BinaryTree('')
-    p_stack.push(e_tree)
-    current_tree = e_tree 
-    
-    for i in fp_list:
+def build_parse_tree(exp):
+    lst = exp.split()
+    s = Stack()
+    a_tree = BinaryTree('')
+    # ？
+    s.push(a_tree)
+    cur = a_tree
+    for i in lst:
         if i == '(':
-            current_tree.insert_left('')
-            
-            # p_stack 中的作为 parent, current_tree 指向
-            p_stack.push(current_tree)
-            current_tree = current_tree.get_left_child()
-        # operands 
-        elif i not in ['+', '-', '*', '/', ')']:
-            current_tree.set_root_val(int(i))
-            parent = p_stack.pop()
-            current_tree = parent 
-        elif i in ['+', '-', '*', '/']:
-            current_tree.set_root_val(i)
-            current_tree.insert_right('')
-            p_stack.push(current_tree)
-            current_tree = current_tree.get_right_child()
+            cur.insert_left(BinaryTree(''))
+            s.push(cur)
+            cur = cur.get_left_child()
+        elif i not in '+-*/)':
+            cur.set_root_val(i)
+            parent = s.pop()
+            cur = parent 
+        elif i in '+-*/':
+            cur.set_root_val(i)
+            cur.insert_right(BinaryTree(''))
+            s.push(cur)
+            cur = cur.get_right_child()
         elif i == ')':
-            current_tree = p_stack.pop()
+            parent = s.pop()
+            cur = parent 
         else:
-            raise ValueError
-    return e_tree    
+            return ValueError
+    return a_tree 
+    
+pt = build_parse_tree("( ( 10 + 5 ) * 3 )")
 
-import operator 
-def evaluate(parse_tree):
-    opers = {"+": operator.add, '-': operator.sub, '*': operator.mul,
-        '/': operator.truediv}
+import operator
+def evaluate(tree)            :
+    opers = {'+':operator.add, '-':operator.sub, '*':operator.mul, 
+            '/':operator.truediv}
     
-    left = parse_tree.get_left_child()
-    right = parse_tree.get_right_child()
+    left_child = tree.get_left_child()
+    right_child = tree.get_right_child()
     
-    if left and right:
-        fn = opers[parse_tree.get_root_val()]
-        return fn(evaluate(left), evaluate(right))
+    if left_child == None:
+        return int(tree.get_root_val())
     else:
-        return parse_tree.get_root_val()
+        fn = opers[tree.get_root_val()]
+        return fn(evaluate(left_child), evaluate(right_child))
+        
+print(evaluate(pt))
 
-def postorder_evaluate(tree):
-    opers = {"+": operator.add, '-': operator.sub, '*': operator.mul,
-        '/': operator.truediv}
-    res1 = None    
-    res2 = None    
+def postorder_eval(tree)        :
+    opers = {'+':operator.add, '-':operator.sub, '*':operator.mul, 
+            '/':operator.truediv}
     
-    if tree:
-        res1 = postorder_evaluate(tree.get_left_child())
-        res2 = postorder_evaluate(tree.get_right_child())
-        # 如果都是数字
+    if tree != None:
+        res1 = postorder_eval(tree.get_left_child())
+        res2 = postorder_eval(tree.get_right_child())
+        
         if res1 and res2:
-            return opers[tree.get_root_val()](res1, res2)
-        # 如果到了 '叶子'
+            fn = opers[tree.get_root_val()]
+            return fn(res1, res2)
         else:
-            return tree.get_root_val()
+            return int(tree.get_root_val())
             
-def print_exp(tree):
+print(postorder_eval(pt))
+
+def inorder_exp(tree):
     str_val = ""
     if tree:
-        str_val = '(' + print_exp(tree.get_left_child())
-        str_val = str_val + str(tree.get_root_val())
-        str_val = str_val + print_exp(tree.get_right_child()) + ')'
+        if tree.get_left_child():
+            str_val = '(' + inorder_exp(tree.get_left_child())
+        else:
+            str_val = inorder_exp(tree.get_left_child())
+        str_val = str_val + tree.get_root_val()
+        if tree.get_left_child():
+            str_val = str_val + inorder_exp(tree.get_right_child()) + ')'
+        else:
+            str_val = str_val + inorder_exp(tree.get_right_child())
+        
     return str_val
     
-pt = build_parse_tree("( ( 10 + 5 ) * ( 2 + 2 ) )")
-print(postorder_evaluate(pt))     
-print(print_exp(pt))
-        
-def preorder(tree):
-    if tree:
-        print(tree.get_root_val)
-        preorder(tree.get_left_child())
-        preorder(tree.get_right_child())
-        
-def postorder(tree):
-    if tree:
-        preorder(tree.get_left_child())
-        preorder(tree.get_right_child())
-        print(tree.get_root_val())
-        
-def inorder(tree):
-    if tree:
-        inorder(tree.get_left_child())
-        print(tree.get_root_val())
-        inorder(tree.get_right_child())
+print(inorder_exp(pt))
+    
+    
+          

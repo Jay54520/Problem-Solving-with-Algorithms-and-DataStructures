@@ -1,70 +1,84 @@
-import ipdb
+from stack import Stack 
+from binarytree import BinaryTree
 
-class BinHeap:
-    def __init__(self):
-        self.list = [0]
-        self.index = 0
-        
-    def get_list(self):
-        self.list.pop(0)
-        return self.list
-        
-    def perc_up(self, index):
-        while index // 2 > 0:
-            if self.list[index] > self.list[index // 2]:
-                self.list[index], self.list[index // 2] = self.list[index // 2], self.list[index]
-                index //= 2
-            else:
-                return             
-            
-    def insert(self, val):
-        self.list.append(val)
-        self.index += 1
-        self.perc_up(self.index)
-        
-            
-    def del_min(self):
-        stop = self.index // 2
-        min = self.list[self.index]
-        index = self.index - 1
-        while index > stop:
-            if self.list[index] < min:
-                min = self.list[index]
-            index -= 1 
-        return_val = min        
-        self.list.remove(min)
-        self.index -= 1
-        return return_val
-        
-    def build_heap(self, a_list):                
-        self.index = len(a_list)
-        self.list = [0] + a_list[:]
-        index = self.index // 2 
-        
-        #ipdb.set_trace()
-        while index > 0:            
-            self.perc_down(index)
-            index -= 1
-            
-    def perc_down(self, index):
-        while 2 * index <= self.index:
-            max_child = self.max_child(index)
-            if self.list[index] < self.list[max_child]:
-                self.list[index], self.list[max_child] = self.list[max_child], self.list[index]
-            index = max_child
-            
-    def max_child(self, index):
-        if 2 * index + 1 > self.index:
-            return 2 * index 
-        if self.list[2*index] > self.list[2*index + 1]:
-            return 2 * index 
-        else: 
-            return 2 * index + 1
-            
-b = BinHeap()            
-b.build_heap([3,2,5,9,6])
-print(b.del_min())
-b.insert(100)
-print(b.get_list())
+def build_parse_tree(exp):
+    lst = exp.split()
+    s = Stack()
+    a_tree = BinaryTree('')
+    # ？
+    s.push(a_tree)
+    cur = a_tree
+    for i in lst:
+        if i == '(':
+            cur.insert_left(BinaryTree(''))
+            s.push(cur)
+            cur = cur.get_left_child()
+        elif i not in '+-*/)':
+            cur.set_root_val(i)
+            parent = s.pop()
+            cur = parent 
+        elif i in '+-*/':
+            cur.set_root_val(i)
+            cur.insert_right(BinaryTree(''))
+            s.push(cur)
+            cur = cur.get_right_child()
+        elif i == ')':
+            parent = s.pop()
+            cur = parent 
+        else:
+            return ValueError
+    return a_tree 
+    
+pt = build_parse_tree("( ( 10 + 5 ) * 3 )")
 
+import operator
+def evaluate(tree)            :
+    opers = {'+':operator.add, '-':operator.sub, '*':operator.mul, 
+            '/':operator.truediv}
+    
+    left_child = tree.get_left_child()
+    right_child = tree.get_right_child()
+    
+    if left_child == None:
+        return int(tree.get_root_val())
+    else:
+        fn = opers[tree.get_root_val()]
+        return fn(evaluate(left_child), evaluate(right_child))
         
+print(evaluate(pt))
+
+def postorder_eval(tree)        :
+    opers = {'+':operator.add, '-':operator.sub, '*':operator.mul, 
+            '/':operator.truediv}
+    
+    if tree != None:
+        res1 = postorder_eval(tree.get_left_child())
+        res2 = postorder_eval(tree.get_right_child())
+        
+        if res1 and res2:
+            fn = opers[tree.get_root_val()]
+            return fn(res1, res2)
+        else:
+            return int(tree.get_root_val())
+            
+print(postorder_eval(pt))
+
+def inorder_exp(tree):
+    str_val = ""
+    if tree:
+        if tree.get_left_child():
+            str_val = '(' + inorder_exp(tree.get_left_child())
+        else:
+            str_val = inorder_exp(tree.get_left_child())
+        str_val = str_val + tree.get_root_val()
+        if tree.get_left_child():
+            str_val = str_val + inorder_exp(tree.get_right_child()) + ')'
+        else:
+            str_val = str_val + inorder_exp(tree.get_right_child())
+        
+    return str_val
+    
+print(inorder_exp(pt))
+    
+    
+          
