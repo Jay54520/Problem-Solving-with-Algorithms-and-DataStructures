@@ -23,7 +23,8 @@ class BinHeap:
     def perc_down(self, index):
         while (2 * index) <= self.index:
             min_child = self.min_child(index)
-            self.list[index], self.list[min_child] = self.list[min_child], self.list[index]
+            if self.list[index] > self.list[min_child]:
+                self.list[index], self.list[min_child] = self.list[min_child], self.list[index]
             index = min_child
             
     def min_child(self, index):
