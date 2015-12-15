@@ -1,84 +1,197 @@
-from stack import Stack 
-from binarytree import BinaryTree
-
-def build_parse_tree(exp):
-    lst = exp.split()
-    s = Stack()
-    a_tree = BinaryTree('')
-    # ？
-    s.push(a_tree)
-    cur = a_tree
-    for i in lst:
-        if i == '(':
-            cur.insert_left(BinaryTree(''))
-            s.push(cur)
-            cur = cur.get_left_child()
-        elif i not in '+-*/)':
-            cur.set_root_val(i)
-            parent = s.pop()
-            cur = parent 
-        elif i in '+-*/':
-            cur.set_root_val(i)
-            cur.insert_right(BinaryTree(''))
-            s.push(cur)
-            cur = cur.get_right_child()
-        elif i == ')':
-            parent = s.pop()
-            cur = parent 
-        else:
-            return ValueError
-    return a_tree 
-    
-pt = build_parse_tree("( ( 10 + 5 ) * 3 )")
-
-import operator
-def evaluate(tree)            :
-    opers = {'+':operator.add, '-':operator.sub, '*':operator.mul, 
-            '/':operator.truediv}
-    
-    left_child = tree.get_left_child()
-    right_child = tree.get_right_child()
-    
-    if left_child == None:
-        return int(tree.get_root_val())
-    else:
-        fn = opers[tree.get_root_val()]
-        return fn(evaluate(left_child), evaluate(right_child))
+import ipdb
+class Node:
+    def __init__(self, value):
+        self.value = value 
+        self.parent = None
+        self.left_child = None
+        self.right_child = None 
         
-print(evaluate(pt))
-
-def postorder_eval(tree)        :
-    opers = {'+':operator.add, '-':operator.sub, '*':operator.mul, 
-            '/':operator.truediv}
-    
-    if tree != None:
-        res1 = postorder_eval(tree.get_left_child())
-        res2 = postorder_eval(tree.get_right_child())
-        
-        if res1 and res2:
-            fn = opers[tree.get_root_val()]
-            return fn(res1, res2)
+    def insert(self, data):
+        # 不需要重复的
+        if self.value == data:
+            return False 
+        elif self.value > data:
+            if self.left_child:
+                self.left_child.insert(data)
+            else:
+                self.left_child = Node(data)
+                self.left_child.parent = self
         else:
-            return int(tree.get_root_val())
+            if self.right_child:
+                self.right_child.insert(data)
+            else:
+                self.right_child = Node(data)
+                self.right_child.parent = self
+    
+    def find(self, data):
+        if self.value == data:
+            return True 
+        elif self.value > data:
+            if self.left_child:
+                self.left_child.find(data)
+            else:
+                return False 
+        else:
+            if self.right_child:
+                self.right_child.find(data)
+            else:
+                return False
+    
+    # helper functions in delete 
+    def is_left_child(self):
+        return self.parent and self.parent.left_child == self 
+    
+    def is_right_child(self):
+        return self.parent and self.parent.right_child == self         
+        
+    def has_both_child(self):
+        return self.left_child and self.right_child
+        
+    def replace_node(self, *, value, left_child, right_child, parent):
+        self.value = value 
+        self.left_child = left_child
+        self.right_child = right_child
+        self.parent = parent 
+        
+    def find_successor(self):        
+        if not self.left_child:
+            return self
+        else:
+            self.left_child.find_successor()
             
-print(postorder_eval(pt))
+    
+    def delete(self, data):
+        if self.value == data:
+            # no child 
+            if (not self.left_child) and (not self.right_child):                                                      
+                if self.is_left_child():
+                    self.parent.left_child = None                  
+                elif self.is_right_child():
+                    self.parent.right_child = None                  
+                # the root and left, right need to delete the value 
+                self = None            
+            # two children
+            elif self.has_both_child():
+                ipdb.set_trace()
+                succ = self.right_child.find_successor()
+                self.value = succ.value 
+                # delete succ 
+                # no child 
+                if (not succ.left_child) and (not succ.right_child):                                                      
+                    if succ.is_left_child():
+                        succ.parent.left_child = None                  
+                    elif succ.is_right_child():
+                        succ.parent.right_child = None
+                # one child 只存在右子树
+                else:
+                    if succ.is_left_child():                        
+                        succ.parent.left_child = succ.right_child
+                    else:
+                        succ.parent.right_child = succ.right_child
+                    
+            # one child 
+            else:                                                
+                if self.is_left_child():
+                    if self.left_child:
+                        self.parent.left_child = self.left_child
+                    else:
+                        self.parent.left_child = self.right_child
+                elif self.is_right_child():
+                    if self.left_child:
+                        self.parent.right_child = self.left_child
+                    else:
+                        self.parent.right_child = self.right_child
+                # root 
+                else:
+                    if self.left_child:
+                        self.replace_node(value=self.left_child.value, left_child=self.left_child.left_child,
+                                right_child=self.left_child.right_child, parent=None)                        
+                    else:
+                        self.replace_node(value=self.right_child.value, left_child=self.right_child.left_child,
+                                right_child=self.right_child.right_child, parent=None)
+        # 寻找要被删除的                        
+        else:
+            if self.value > data:
+                if self.left_child:
+                    self.left_child.delete(data)
+                else:
+                    return False 
+            else:
+                if self.right_child:
+                    self.right_child.delte(data)
+                else:
+                    return False
 
-def inorder_exp(tree):
-    str_val = ""
-    if tree:
-        if tree.get_left_child():
-            str_val = '(' + inorder_exp(tree.get_left_child())
-        else:
-            str_val = inorder_exp(tree.get_left_child())
-        str_val = str_val + tree.get_root_val()
-        if tree.get_left_child():
-            str_val = str_val + inorder_exp(tree.get_right_child()) + ')'
-        else:
-            str_val = str_val + inorder_exp(tree.get_right_child())
+    def preorder(self):
+        if self:
+            print(str(self.value))
+            if self.left_child:
+                self.left_child.preorder()
+            if self.right_child:
+                self.right_child.preorder()
+                
+    def inorder(self):
+        if self:            
+            if self.left_child:
+                self.left_child.preorder()
+            print(str(self.value))
+            if self.right_child:
+                self.right_child.preorder()
+                
+    def postorder(self):
+        if self:            
+            if self.left_child:
+                self.left_child.preorder()
+            if self.right_child:
+                self.right_child.preorder()
+            print(str(self.value))
+    
+class Tree:
+    def __init__(self):
+        self.root = None
         
-    return str_val
-    
-print(inorder_exp(pt))
-    
-    
-          
+    def insert(self, data):
+        if self.root:
+            self.root.insert(data)
+        else:
+            self.root = Node(data)
+            return True 
+            
+    def find(self, data):
+        if self.root:
+            self.root.find(data)
+        else:
+            return False
+            
+    def delete(self, data):
+        #ipdb.set_trace()
+        if self.root:
+            self.root.delete(data)
+        else:
+            return False 
+            
+    def preorder(self):
+        if self.root:
+            self.root.preorder()
+        else:
+            return False 
+            
+    def inorder(self):
+        if self.root:
+            self.root.inorder()
+        else:
+            return False 
+            
+    def postorder(self):
+        if self.root:
+            self.root.postorder()
+        else:
+            return False                 
+            
+bst = Tree()            
+bst.insert(10)
+bst.insert(15)
+bst.insert(1)
+print(bst.inorder())
+bst.delete(10)
+print(bst.inorder())
