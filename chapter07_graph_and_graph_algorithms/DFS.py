@@ -1,3 +1,4 @@
+import ipdb
 class Vertex:
     def __init__(self, id):
         self.id = id 
@@ -51,18 +52,19 @@ class Graph:
         return iter(self.vertList.values())
         
 # 与 BFS 不同这里使用 stack , python's list 
+# inorder 
 def DFS(startVertex, id):
-    stack = list([startVertex])
+    stack = [startVertex]
     visitedVertics = set()
     while len(stack) > 0:
-        vertex = stack.pop()
+        vertex = stack.pop()        
         if vertex in visitedVertics:
             continue
-            
+        print(vertex)
         if vertex.id == id:
             return True             
         visitedVertics.add(vertex)
-        
+                
         for n in vertex.getConnections():
             if n not in visitedVertics:
                 stack.append(n)
@@ -78,11 +80,14 @@ g.addEdge(1,2,4)
 g.addEdge(2,3,0)
 g.addEdge(3,4,7)
 g.addEdge(3,5,3)
+g.addEdge(4,0,1)
+g.addEdge(5,4,8)
+g.addEdge(5,2,1)
 for v in g.vertList.values():
     for v2 in v.getConnections():
         print("(%s, %s)" % (v.getId(), v2.getId()))
     
 print(DFS(g.vertList[3], 5))
-print(DFS(g.vertList[3], 10))
+print(DFS(g.vertList[3], 0))
 
         
